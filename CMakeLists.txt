@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.16)
+project(demonfront CXX)
+set(CMAKE_CXX_STANDARD 17)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+option(DF_TRACE "function-entry trace of both CPUs (debug)" OFF)
+if(DF_TRACE)
+  add_compile_definitions(DF_TRACE=1)
+endif()
+set(GEN_WARN -Wno-parentheses-equality -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-value)
+
+# recompiled code (tools/thumbrec.py, tools/m68krec.py)
+file(GLOB ARM_GEN gen/arm/*.cpp)
+file(GLOB M68K_GEN gen/m68k/*.cpp)
+add_library(df_gen STATIC ${ARM_GEN} ${M68K_GEN})
+target_include_directories(df_gen PUBLIC runtime gen/arm gen/m68k host)
+target_compile_options(df_gen PRIVATE ${GEN_WARN})
+
+# the board: memory maps, I/O, scheduler
+add_library(df_board STATIC host/arm_host.cpp host/arm_native.cpp host/m68k_host.cpp host/scheduler.cpp host/fiber.cpp host/trace.cpp host/video.cpp host/png.cpp host/z80.cpp host/ics2115.cpp host/sound.cpp host/romset.cpp)
+target_include_directories(df_board PUBLIC runtime gen/arm gen/m68k host)
+
+add_executable(df_desktop host/df_main.cpp)
+target_link_libraries(df_desktop df_board df_gen df_board z)

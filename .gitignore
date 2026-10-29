@@ -1,0 +1,24 @@
+# Game data and anything generated from it
+/rom/
+/gen/
+/notes/
+*.zip
+*.u3
+*.u4
+*.u5
+*.u6
+*.u9
+*.u11
+*.u20
+*.u26
+*.u29
+*.rom
+*.bin
+*.wav
+/vita/sce_sys/*.png
+/vita/sce_sys/livearea/contents/*.png
+# build output
+/build/
+/vita/build/
+*.vpk
+__pycache__/
